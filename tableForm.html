@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de videojuego</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+   <form id="gameForm">
+    <label for="game-name">Nombre del juego:</label>
+    <input type="text" id="game-name" name="game-name" required>
+    
+    <label for="genre">Género:</label>
+    <select id="genre" name="genre" required>
+        <option value="RPG">RPG</option>
+        <option value="Action">Action</option>
+        <option value="Adventure">Adventure</option>
+    </select>
+    
+    <label for="release-date">Fecha de lanzamiento:</label>
+    <input type="date" id="release-date" name="release-date" required>
+    
+    <label for="platform">Plataforma:</label>
+    <input type="text" id="platform" name="platform" required>
+    
+    <label for="rating">Calificación:</label>
+    <input type="number" id="rating" name="rating" min="0" max="10" required>
+    
+    <button type="submit">Enviar</button>
+</form>
+
+
+    <script>
+      const form = document.getElementById('gameForm');
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwhU5PjVFFop7CKQ-Cp9XEeWJ00wdpdvTur7hlU6PErgvT-Hc74_3QqEZRwIeiCF3_NLQ/exec'; // Lien déployé de ton Apps Script
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();  // Empêche la soumission classique du formulaire
+
+    const formData = new FormData(form);  // Récupérer les données du formulaire
+    const formObject = {};
+
+    // Convertir FormData en objet JS
+    formData.forEach((value, key) => formObject[key] = value);
+
+    // Envoyer les données en JSON avec fetch
+    fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(formObject),  // Conversion des données en JSON
+        headers: {
+            'Content-Type': 'application/json',  // Déclaration du type de contenu comme JSON
+        },
+    })
+    .then(response => response.text())  // Lire la réponse comme du texte
+    .then((text) => {
+        console.log('Réponse du serveur :', text);  // Afficher la réponse dans la console
+        if (text.includes('correctamente')) {
+            alert('¡Datos enviados correctamente a Google Sheets!');
+        } else {
+            alert('Erreur lors de l\'envoi des données à Google Sheets : ' + text);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de l\'envoi:', error);  // Log les erreurs éventuelles dans la console
+        alert('Erreur lors de l\'envoi des données à Google Sheets.');
+    });
+});
+
+    </script>
+
+</body>
+</html>
